@@ -44,16 +44,16 @@ def daily_stats(time_series):
     max = min
     media = 0
     n_stats = 0    #Utilizzato per tenere il conto di quanti dati si possiedono per ogni singolo giorno (serve per ottenere la media)
-    curr_day = time_series[0][0]-(time_series[0][0]%86400)    #
+    curr_day = time_series[0][0]-(time_series[0][0]%86400)    #Per controllare se i valori appartengono ad un giorno differente o meno
     
     for i in range(len(time_series)):
-        if(i>0):
-            if(time_series[i][0] <= time_series[i-1][0]):
+        if(i>0):   #Per i=0 non ci sarebbe un valore precedente
+            if(time_series[i][0] <= time_series[i-1][0]):   #Controllo che le data sia maggiore alla precedente
                 raise ExamException('Errore: Ordine di data dei valori non accettabile.')
         
         stat_day = time_series[i][0]-(time_series[i][0]%86400)
         
-        if(stat_day == curr_day):
+        if(stat_day == curr_day):   #Azioni nel caso in caso di stessa data
             n_stats += 1
             media += time_series[i][1]
             if(time_series[i][1]<min):
@@ -61,17 +61,18 @@ def daily_stats(time_series):
             
             if(time_series[i][1]>max):
                 max = time_series[i][1]
-        else:
+        
+        else:   #In caso di data diversa dalla precedente
             media = media/n_stats
             valori.append([float(min),float(max),float(media)])
             n_stats = 1
             min = time_series[i][1]
             max = time_series[i][1]
             media = time_series[i][1]
-            curr_day = stat_day
+            curr_day = stat_day    #Cambio di data
         
     media = media/n_stats
-    valori.append([float(min),float(max),float(media)])
+    valori.append([float(min),float(max),float(media)])   #Finito il ciclo for bisogna effettuare l'inserimento degli ultimi valori
     return valori
 
 
@@ -83,8 +84,8 @@ print(time_series)
 
 
 
-
 daily_stats_series = daily_stats(time_series)
 
 for i in range(len(daily_stats_series)):
     print(daily_stats_series[i])
+    
